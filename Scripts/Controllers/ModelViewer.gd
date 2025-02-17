@@ -46,11 +46,27 @@ func _setModel(index: int) -> void:
 	pass
 
 
-func add_model(mesh_path: String, file_path: String) -> void:
-	var mesh = ObjParse.load_obj(mesh_path)
+func add_model(mesh_path: String, file_path: String, material_path: String) -> void:
 	var model = MeshInstance.new()
+	var mesh = ObjParse.load_obj(mesh_path, material_path)
+
+	# Make a new image and set it as a texture
+	var image = Image.new()
+	# This is the relative path of texture but I don't want to make another variable so here it is...
+	image.load(material_path.rstrip(material_path.get_file())+ObjParse.get_mtl_tex_paths(material_path)[0])
+
+	var texture = ImageTexture.new()
+	texture.create_from_image(image)
+
+	# Check for multiple surfaces and set their own materials
+	for i in mesh.get_surface_count():
+		mesh.surface_get_material(i).albedo_texture = texture
 
 	model.mesh = mesh
+
+	model.rotation_degrees.y = 45
+	model.scale = Vector3(4, 4, 4)
+	model.translation.y = -1
 
 	var scene = PackedScene.new()
 	var result = scene.pack(model)
@@ -61,4 +77,5 @@ func add_model(mesh_path: String, file_path: String) -> void:
 			push_error("An error occurred while saving the scene to disk.")
 
 	models.push_back(scene)
-	_setModel(0)
+	model_index = models.size() - 1
+	_setModel(model_index)

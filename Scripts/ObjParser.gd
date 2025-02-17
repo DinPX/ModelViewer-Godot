@@ -159,7 +159,7 @@ static func _get_image(mtl_filepath:String, tex_filename:String)->Image:
 		print("    Debug: texture file path: " + texfilepath + " of type " + filetype)
 	
 	var img:Image = Image.new()
-	var err=img.load(texfilepath)
+	var _err=img.load(texfilepath)
 	return img
 
 static func _create_texture(data:PoolByteArray):
@@ -184,9 +184,9 @@ static func _create_obj(obj:String,mats:Dictionary)->Mesh:
 	var normals := PoolVector3Array()
 	var uvs := PoolVector2Array()
 	var faces := {}
-	var fans := []
+	var _fans := []
 
-	var firstSurface := true
+	var _firstSurface := true
 	var mat_name := "default"
 	var count_mtl:=0
 	

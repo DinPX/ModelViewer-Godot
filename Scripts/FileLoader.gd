@@ -46,13 +46,12 @@ func create_new_model() -> void:
 				dir.make_dir(export_path+"/"+rel_path.get_base_dir())
 				dir.copy(copy_path, export_path+"/"+rel_path)
 
-		# Check if import file exists first, if yes, load the mesh
-		# Make a PackedScene and push it on models
-		#if dir.file_exists(export_path+get_mtl_path().get_file()+".import") == true:
-			#model.mesh = load(export_path+file_path.get_file())
-			#add_child(model)
-			pass
-		viewer.add_model(export_path+"/"+file_path.get_file(), export_path+"/"+file_path.get_file().replacen(".obj", ".tscn"))
+		# After copying the needed OBJ, MTL, and texture files, add a new model which will use them (via paths below)
+		viewer.add_model(
+			export_path+"/"+file_path.get_file(),
+			export_path+"/"+file_path.get_file().replacen(".obj", ".tscn"),
+			export_path+"/"+get_mtl_path().get_file())#,
+			#rel_path)
 
 
 func get_mtl_path() -> String:
