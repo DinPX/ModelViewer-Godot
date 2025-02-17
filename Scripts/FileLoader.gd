@@ -50,8 +50,7 @@ func create_new_model() -> void:
 		viewer.add_model(
 			export_path+"/"+file_path.get_file(),
 			export_path+"/"+file_path.get_file().replacen(".obj", ".tscn"),
-			export_path+"/"+get_mtl_path().get_file())#,
-			#rel_path)
+			export_path+"/"+get_mtl_path().get_file())
 
 
 func get_mtl_path() -> String:

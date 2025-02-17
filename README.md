@@ -1,5 +1,5 @@
 # Model Viewer
-Basic Model Viewer test in Godot 3  
+View your obj models on the fly!  
 Features drag-and-drop (OBJ), rotation, zooming and loading models.
 
 ![app detailed and simple preview](/model_viewer_preview.png)
@@ -17,13 +17,81 @@ Other directory structures would most likely result to error.
 - Help button ![help toggle button sprite](/Assets/Images/help_btn.png) - shows / hides help screen
 - Credits button ![credits toggle button sprite](/Assets/Images/credits_btn.png) - shows / hides credits screen
 
+# Documentation
+## FileLoader.gd
+This script handles the creation of directories and copying of necessary files.  
+
+- `export_path` - path where the drag-and-dropped file and others will be copied to.
+```gdscript
+# Equivalent to '~/Documents/ModelViewer/Models/OBJ' in Linux
+var export_path := OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)+"/ModelViewer/Models/OBJ"
+```  
+
+- `create_new_model()` - creates a directory and copies each `obj`, `mtl`, and texture file.
+```gdscript
+...
+
+if _create_directory(dir, export_path) == true:
+    # Copy OBJ model
+    dir.copy(file_path, export_path+"/"+file_path.get_file())
+
+    # Copy MTL file
+    dir.copy(get_mtl_path(), 
+    export_path+"/"+get_mtl_path().get_file())
+
+    # Copy PNG texture
+    var copy_path : String = get_tex_path(export_path+"/"+get_mtl_path().get_file())[0]
+    var rel_path : String = get_tex_path(export_path+"/"+get_mtl_path().get_file())[1]
+
+    ...
+```  
+
+- `add_model(mesh_path: String, file_path: String, material_path: String)` - adds model to the array of models. It uses the arguments to load needed files and make a loadable resource from them.
+    - `mesh_path` - this argument refers to the path of the `obj` file
+    - `file_path` - this argument refers to the path of the `tscn` file
+```gdscript
+func add_model(mesh_path: String, file_path: String, material_path: String) -> void:
+	var model = MeshInstance.new()
+	var mesh = ObjParse.load_obj(mesh_path, material_path)
+
+	# Make a new image and set it as a texture
+	var image = Image.new()
+	# This is the relative path of texture but I don't want to make another variable so here it is...
+    image.load(material_path.rstrip(material_path.get_file())+ObjParse.get_mtl_tex_paths(material_path)[0])
+
+	var texture = ImageTexture.new()
+	texture.create_from_image(image)
+
+	# Check for multiple surfaces and set their own materials
+	for i in mesh.get_surface_count():
+		mesh.surface_get_material(i).albedo_texture = texture
+
+	model.mesh = mesh
+
+	model.rotation_degrees.y = 45
+	model.scale = Vector3(4, 4, 4)
+	model.translation.y = -1
+
+	var scene = PackedScene.new()
+	var result = scene.pack(model)
+
+	if result == OK:
+		var error = ResourceSaver.save(file_path, scene)
+		if error != OK:
+			push_error("An error occurred while saving the scene to disk.")
+
+	models.push_back(scene)
+	model_index = models.size() - 1
+	_setModel(model_index)
+```
+
 # Changes
 
 <details open>
 <summary>added <b>gd-obj</b> <code>3.x</code> by <a href="https://github.com/Ezcha" target="_blank">Ezcha</a> and co. [Feb. 17, 2025]</summary>
-<h3>Feature</h3>
 
 - It is now possible to parse `obj` to mesh thanks to their amazing work.
+- Now loads `obj`, `mtl`, and texture on export build
 
 </details>
 
