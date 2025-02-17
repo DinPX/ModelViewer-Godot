@@ -1,8 +1,11 @@
 extends Control
 
+const DIR_ERR = 'ERROR: Failed to create directory "%s". Error code %s.'
+
+# Equivalent to '~/Documents/ModelViewer/Models/OBJ' in Linux
+var export_path := OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)+"/ModelViewer/Models/OBJ"
 
 var file_path := ""
-var obj_folder := "res://Models/OBJ/"
 var loaded_file := File.new()
 
 onready var viewer := $"%ModelViewer"
@@ -14,40 +17,42 @@ func _ready() -> void:
 
 func get_files_path(files: PoolStringArray, _screen: int) -> void:
 	file_path = files[0]
-	create_new_model()
+	if not file_path.empty():
+		create_new_model()
 
 
 func create_new_model() -> void:
+	# Create directory first if it doesn't exist yet
 	var dir := Directory.new()
-	#var model := MeshInstance.new()
+	
+	if _create_directory(dir, export_path) == true:
+		# Copy OBJ model
+		dir.copy(file_path, export_path+"/"+file_path.get_file())
 
-	# Copy OBJ model
-	dir.copy(file_path, obj_folder+file_path.get_file())
+		# Copy MTL file
+		dir.copy(get_mtl_path(), 
+		export_path+"/"+get_mtl_path().get_file())
 
-	# Copy MTL file
-	dir.copy(get_mtl_path(), 
-	obj_folder+get_mtl_path().get_file())
+		# Copy PNG texture
+		var copy_path : String = get_tex_path(export_path+"/"+get_mtl_path().get_file())[0]
+		var rel_path : String = get_tex_path(export_path+"/"+get_mtl_path().get_file())[1]
 
-	# Copy PNG texture
-	var copy_path : String = get_tex_path(obj_folder+get_mtl_path().get_file())[0]
-	var rel_path : String = get_tex_path(obj_folder+get_mtl_path().get_file())[1]
+		# Check if MTL file exist, if yes, get the texture
+		if dir.file_exists(export_path+"/"+get_mtl_path().get_file()):
+			# Check if directory exists first before copying file
+			if dir.dir_exists(export_path+"/"+rel_path) == true:
+				dir.copy(copy_path, export_path+"/"+rel_path)
+			else:
+				dir.make_dir(export_path+"/"+rel_path.get_base_dir())
+				dir.copy(copy_path, export_path+"/"+rel_path)
 
-	# Check if MTL file exist, if yes, get the texture
-	if dir.file_exists(obj_folder+get_mtl_path().get_file()):
-		# Check if directory exists first before copying file
-		if dir.dir_exists(obj_folder+rel_path) == true:
-			dir.copy(copy_path, obj_folder+rel_path)
-		else:
-			dir.make_dir(obj_folder+rel_path.get_base_dir())
-			dir.copy(copy_path, obj_folder+rel_path)
-
-	# Check if import file exists first, if yes, load the mesh
-	# Make a PackedScene and push it on models
-	if dir.file_exists(obj_folder+get_mtl_path().get_file()+".import") == true:
-		#model.mesh = load(obj_folder+file_path.get_file())
-		#add_child(model)
-		pass
-	viewer.add_model(obj_folder+file_path.get_file(), obj_folder+file_path.get_file().replacen(".obj", ".tscn"))
+		# Check if import file exists first, if yes, load the mesh
+		# Make a PackedScene and push it on models
+		#if dir.file_exists(export_path+get_mtl_path().get_file()+".import") == true:
+			#model.mesh = load(export_path+file_path.get_file())
+			#add_child(model)
+			pass
+		viewer.add_model(export_path+"/"+file_path.get_file(), export_path+"/"+file_path.get_file().replacen(".obj", ".tscn"))
 
 
 func get_mtl_path() -> String:
@@ -114,3 +119,16 @@ func get_tex_path(mtl_path: String) -> Array:
 	paths[0] = tex_path
 
 	return paths
+
+
+func _create_directory(directory, path) -> bool:
+	var exists := false
+	if not directory.dir_exists(path):
+		var error_code = directory.make_dir_recursive(path)
+		exists = true
+		if error_code != OK:
+			printerr(DIR_ERR % [path, error_code])
+			exists = false
+	else:
+		exists = true
+	return exists

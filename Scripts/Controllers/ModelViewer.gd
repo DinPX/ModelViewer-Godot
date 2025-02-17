@@ -46,20 +46,19 @@ func _setModel(index: int) -> void:
 	pass
 
 
-# Convert model to PackedScene so that it can be instanced later
 func add_model(mesh_path: String, file_path: String) -> void:
-	var scene = PackedScene.new()
+	var mesh = ObjParse.load_obj(mesh_path)
 	var model = MeshInstance.new()
 
-	model.mesh = load(mesh_path)
+	model.mesh = mesh
 
+	var scene = PackedScene.new()
 	var result = scene.pack(model)
 
-	# Get the file path and set .tscn extension
 	if result == OK:
 		var error = ResourceSaver.save(file_path, scene)
 		if error != OK:
 			push_error("An error occurred while saving the scene to disk.")
 
-	models.push_front(scene)
+	models.push_back(scene)
 	_setModel(0)

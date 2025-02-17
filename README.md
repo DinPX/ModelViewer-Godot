@@ -20,6 +20,14 @@ Other directory structures would most likely result to error.
 # Changes
 
 <details open>
+<summary>added <b>gd-obj</b> <code>3.x</code> by <a href="https://github.com/Ezcha" target="_blank">Ezcha</a> and co. [Feb. 17, 2025]</summary>
+<h3>Feature</h3>
+
+- It is now possible to parse `obj` to mesh thanks to their amazing work.
+
+</details>
+
+<details>
 <summary>fixed texture pixel issues [Dec. 30, 2024]</summary>
 <h3>UI</h3>
 
@@ -79,15 +87,13 @@ Other directory structures would most likely result to error.
 - [ ] Controls for adjusting the detailed background
 - [x] Credits screen
 - [x] Fix pixel tearing of textures (e.g. buttons)
-- [ ] Make drag-and-drop work on export
+- [x] Make drag-and-drop work on export
 
 # Credits
-## Code
-**Ivolutio [(@Ivolutio)](https://twitter.com/Ivolutio)** - loading models, controls  
-**Din [(@DinPixels)](https://bsky.app/profile/dinpixels.bsky.social)** - drag-and-drop and load model
-
-## Sprites
-**Din [(@DinPixels)](https://bsky.app/profile/dinpixels.bsky.social)** - buttons, texts
+## Source
+**Ivolutio [(@Ivolutio)](https://github.com/Ivolutio)** - loading models, controls  
+**Dylan [(@Ezcha)](https://github.com/Ezcha)**, **Jeff Brooks [(@jeffgamedev)](https://github.com/jeffgamedev)**, **Deakcor [(@deakcor)](https://github.com/deakcor)**, and **Karl [(@kb173)](https://github.com/kb173)** - `obj` parser  
+**Din [(@DinPX)](https://github.com/DinPX)** - drag-and-drop to load model, and some UI sprites
 
 ## Models
 **Kenney [(www.kenney.nl)](https://www.kenney.nl)** - cars, barrel, crate, tree  
@@ -99,3 +105,6 @@ License: Creative Commons Zero, CC0 [(https://creativecommons.org/publicdomain/z
 **Bit3 Font** by **[CamShaft](https://www.fontsc.com/font/designer/camshaft)**  
 License: Freeware (Personal & Commercial Use)  
 <https://fontzone.net/font-details/bit3>
+
+## License
+This project uses **gd-obj** `3.x` by **[(@Ezcha)](https://github.com/Ezcha)** and co. which is under their own MIT license: [https://github.com/Ezcha/gd-obj/blob/3.x/LICENSE](https://github.com/Ezcha/gd-obj/blob/3.x/LICENSE).
