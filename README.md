@@ -44,7 +44,9 @@ if _create_directory(dir, export_path) == true:
     var rel_path : String = get_tex_path(export_path+"/"+get_mtl_path().get_file())[1]
 
     ...
-```  
+```
+## ModelViewer.gd
+This script handles the array of models as well as navigating through them.  
 
 - `add_model(mesh_path: String, file_path: String, material_path: String)` - adds model to the array of models. It uses the arguments to load needed files and make a loadable resource from them.
     - `mesh_path` - this argument refers to the path of the `obj` file
